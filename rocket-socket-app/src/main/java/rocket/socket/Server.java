@@ -3,6 +3,7 @@ import io.rsocket.transport.netty.server.TcpServerTransport;
 import io.rsocket.transport.netty.server.WebsocketServerTransport;
 import io.rsocket.util.DefaultPayload;
 import reactor.core.Disposable;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import io.rsocket.core.RSocketServer;
 
@@ -10,6 +11,7 @@ import java.math.BigInteger;
 
 import io.rsocket.Payload;
 import io.rsocket.RSocket;
+import org.reactivestreams.Publisher;
 
 public class Server 
 {
@@ -57,6 +59,18 @@ public class Server
             String response = "I have recieved the request";
             return Mono.just(DefaultPayload.create(response));
 
+        }
+
+        public Flux<Payload> requestStream(Payload payload) {
+            String streamName = payload.getDataUtf8();
+            if (streamName.equals("numbers")) {
+                return Flux.range(1, 10)
+                        .map(i -> DefaultPayload.create(String.valueOf(i)));
+            } else
+            {
+                return Flux.range(20, 30)
+                        .map(i -> DefaultPayload.create(String.valueOf(i)));
+            }
         }
 
     }
