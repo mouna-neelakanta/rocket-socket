@@ -1,11 +1,13 @@
 package rocket.socket;
 import io.rsocket.transport.netty.server.TcpServerTransport;
+import io.rsocket.util.DefaultPayload;
 import reactor.core.Disposable;
 import reactor.core.publisher.Mono;
 import io.rsocket.core.RSocketServer;
 
 import java.math.BigInteger;
 
+import io.rsocket.Payload;
 import io.rsocket.RSocket;
 
 public class Server 
@@ -43,6 +45,17 @@ public class Server
             payload.data().readBytes(bytes);
             System.out.println("Received: {}" + new BigInteger(bytes).intValue());
             return Mono.empty();
+        }
+
+        @Override
+        public Mono<Payload> requestResponse(Payload payload)
+        {
+            byte[] bytes = new byte[payload.data().readableBytes()];
+            payload.data().readBytes(bytes);
+            System.out.println("Received: {}" + new BigInteger(bytes).intValue());
+            String response = "I have recieved the request";
+            return Mono.just(DefaultPayload.create(response));
+            
         }
     }
 }
