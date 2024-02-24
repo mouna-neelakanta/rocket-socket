@@ -1,5 +1,6 @@
 package rocket.socket;
 import io.rsocket.transport.netty.server.TcpServerTransport;
+import io.rsocket.transport.netty.server.WebsocketServerTransport;
 import io.rsocket.util.DefaultPayload;
 import reactor.core.Disposable;
 import reactor.core.publisher.Mono;
@@ -21,7 +22,7 @@ public class Server
     public Server()
     {
         server = RSocketServer.create((setup, sendingSocket) -> Mono.just(new MyRSocket()))
-        .bind(TcpServerTransport.create("localhost", 7000))
+        .bind(WebsocketServerTransport.create("localhost", 7000))
         .doOnNext(conn -> System.out.println("Connected to " + conn.address()))
         .subscribe();
 
@@ -55,7 +56,10 @@ public class Server
             System.out.println("Received: {}" + new BigInteger(bytes).intValue());
             String response = "I have recieved the request";
             return Mono.just(DefaultPayload.create(response));
-            
+
         }
+
+        @Override
+        public 
     }
 }
